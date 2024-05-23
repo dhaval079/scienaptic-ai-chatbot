@@ -141,10 +141,10 @@ app.get('/reset', async (c) => {
 })
 
 
-const port = 3001
-console.log(`Server is running on port ${port}`)
+const port = process.env.PORT || 3001;
+console.log(`Server is running on port ${port}`);
 
 serve({
   fetch: app.fetch,
-  port
-})
+  port: Number(port)
+});

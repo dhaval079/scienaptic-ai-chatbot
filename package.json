@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "generate": "prisma generate",
     "dev": "tsx watch src/index.tsx",
     "build:css": "postcss src/styles/tailwind.css -o dist/styles.css",
     "build:ts": "tsc",

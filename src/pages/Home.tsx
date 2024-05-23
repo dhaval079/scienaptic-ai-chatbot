@@ -15,9 +15,9 @@ export default function Home() {
     <Layout>
       <div class="flex h-full">
        
-        <div class="grid grid-cols-4">
+        <div class="grid grid-cols-5">
           <Left />
-          <div class="mx-auto mt-4 sm:mt-12 col-span-2 p-4">
+          <div class="mt-4 sm:mt-12 col-span-3 p-4">
             <Chat/>
           </div>
           <Right />

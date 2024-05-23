@@ -16,7 +16,16 @@ export default function Chat() {
       </div>
 
       <div className="flex flex-col flex-grow overflow-hidden rounded-lg px-2 sm:p-4">
-        <div id="chat-messages" className="flex-grow overflow-y-auto">
+        <div
+          id="chat-messages"
+          className="flex-grow overflow-y-auto"
+          hx-get="/loading"
+          hx-trigger="click from:#sendButton, keyup[key=='Enter'] from:#chat-input"
+          hx-target="this"
+          hx-swap="beforeend"
+          hx-include="#chat-input"
+          hx-vals="{'content': document.getElementById('chat-input').value}"
+        >
 
           {/* {messages.map((message, index) => (
             <div key={index} className="my-1 sm:my-1.5">

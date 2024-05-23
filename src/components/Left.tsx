@@ -21,6 +21,7 @@ export default function Left() {
         hx-vals="{'content': document.getElementById('chat-input').value}"
         
       >
+
       </div>
 
     </div>

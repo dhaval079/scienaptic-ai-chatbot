@@ -1,15 +1,16 @@
 // @ts-nocheck
 import { serve } from '@hono/node-server'
-import { Env, Hono } from 'hono'
-import { PrismaClient } from '@prisma/client'
+import { Hono } from 'hono'
 import Home from './pages/Home'
 import ChatMessage from './components/ChatMessage'
 import { Message } from './types'
-import Chat from './components/Chat'
 import axios from "axios"
 import Citiations from './components/Citation'
+import { uuidv7 } from "uuidv7";
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
+const uuid = uuidv7()
 const app = new Hono();
 
 app.get('/', (c) => {
@@ -18,6 +19,7 @@ app.get('/', (c) => {
 
 app.post('/response', async (c) => {
   const { content } = await c.req.json();
+  console.log("response");
 
   if (content.length == 0) {
     const messages: Message[] = [{
@@ -34,14 +36,7 @@ app.post('/response', async (c) => {
     )
   }
   else {
-    // const result = await prisma.chatbot.createManyAndReturn({
-    //   data:[
-    //     {role:"user", content:content},
-    //     {role:"assistant", content:"Hi there! I'm Chatbot UI, an AI assistant. I can help you with things like answering questions, providing information, and helping with tasks. How can I help you?"}
-    //   ],
-    //   skipDuplicates: true
-    // })
-    // console.log(result);
+    
     // const alldata = await prisma.chatbot.findMany({
     //   select:{
     //     role:true,
@@ -52,19 +47,22 @@ app.post('/response', async (c) => {
 
     const response = await axios.post("http://13.202.63.29:5000/ask_llm", {
       "question": `${content}`,
-      "uuid_id": "dhaval",
+      "uuid_id": `${uuid}`,
       "email_id": "",
       "ip_address": "dummy"
     })
-
-    // const response = await axios.get("http://localhost:3000/data");
     const data = response.data
-    // console.log(data.response.content);
+
+    const result = await prisma.chatbot.createManyAndReturn({
+      data:[
+        {role:"user", content:content},
+        {role:"assistant", content:`${data.data}`}
+      ],
+      skipDuplicates: true
+    })
+    console.log(result);
 
     const messages: Message[] = [{
-      role: "user",
-      content: content
-    }, {
       role: "assistant",
       content: `${data.data}`
     }]
@@ -79,20 +77,16 @@ app.post('/response', async (c) => {
 })
 
 app.get('/url', async (c) => {
-  const content = c.req.query('content'); 
+  const content = c.req.query('content');
   console.log('Content from chat input:', content);
 
-  // const response = await axios.get("http://localhost:3000/data");
-  // const data = response.data.Citiations
-  // console.log(data);
-
-   const response = await axios.post("http://13.202.63.29:5000/ask_llm", {
-      "question": `${content}`,
-      "uuid_id": "yash",
-      "email_id": "",
-      "ip_address": "dummy"
-    })
-    const data = response.data.metadata
+  const response = await axios.post("http://13.202.63.29:5000/ask_llm", {
+    "question": `${content}`,
+    "uuid_id": `${uuid}`,
+    "email_id": "",
+    "ip_address": "dummy"
+  })
+  const data = response.data.metadata
 
   return c.html(
     <>
@@ -101,15 +95,13 @@ app.get('/url', async (c) => {
   )
 })
 
-app.post('/loading', async (c) => {
-  const { content } = await c.req.json();
+app.get('/loading', async (c) => {
+  const content = c.req.query('content');
+  console.log("loading", content);
 
   const messages: Message[] = [{
     role: "user",
     content: content
-  }, {
-    role: "assistant",
-    content: ``
   }]
 
   return c.html(
@@ -121,8 +113,26 @@ app.post('/loading', async (c) => {
 })
 
 
-
 app.get('/reset', async (c) => {
+  console.log("reset");
+  
+
+   const alldata = await prisma.chatbot.findMany({
+      select:{
+        role:true,
+        content:true,
+      }
+    })
+    console.log(alldata);
+
+    const deleteData = await prisma.chatbot.deleteMany({});
+
+    const sessionData = await prisma.aLLchatbot.create({
+      data: {
+        session: alldata,
+      },
+    });
+
   return c.html(
     <script>
       window.location.reload();

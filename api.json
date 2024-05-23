@@ -1,0 +1,20 @@
+{
+    "data": {
+      "response": {
+        "role": "assistant",
+        "content": "Hi there! I'm Chatbot UI, an AI assistant. I can help you with things like answering questions, providing information, and helping with tasks. How can I help you?"
+      },
+      "MostSearchedTopic": {
+        "Group1": "Relates question1",
+        "Group2": "Relates question2",
+        "Group3": "Relates question3",
+        "Group4": "Relates question4",
+        "Group5": "Relates question5"
+      },
+      "Citiations": {
+        "Page": "4",
+        "Title": "Some title will be come here and we can add",
+        "Link": "https://wikipedia.org/"
+      }
+    }
+  }
